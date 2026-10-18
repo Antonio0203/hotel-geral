@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMS - Hotel Tavares Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Tavares PMS</h2>
+      <nav>
+        <a href="#mapa" class="active">Mapa de Ocupação</a>
+        <a href="#reservas">Reservas</a>
+        <a href="#quartos">Gestão de Quartos</a>
+        <a href="#governanca">Governança</a>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="content">
+      <header class="topbar">
+        <span>Painel do Staff</span>
+        <button id="btn-logout">Sair</button>
+      </header>
+
+      <!-- Visão Gantt / Ocupação -->
+      <section class="panel-section">
+        <h3>Mapa de Ocupação</h3>
+        <div class="gantt-container">
+          <div class="gantt-header">
+            <div>Quarto</div>
+            <div>01/10</div><div>02/10</div><div>03/10</div><div>04/10</div><div>05/10</div>
+          </div>
+          <div class="gantt-row">
+            <div>Quarto 101</div>
+            <div class="status-block status-confirmado">Confirmado</div>
+            <div class="status-block status-confirmado">Confirmado</div>
+            <div class="status-block"></div>
+            <div class="status-block"></div>
+            <div class="status-block"></div>
+          </div>
+          <div class="gantt-row">
+            <div>Quarto 102</div>
+            <div class="status-block"></div>
+            <div class="status-block status-pendente">Pendente</div>
+            <div class="status-block status-ocupado">Ocupado</div>
+            <div class="status-block status-ocupado">Ocupado</div>
+            <div class="status-block"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tabela Governança -->
+      <section class="panel-section">
+        <h3>Governança e Limpeza</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Quarto</th>
+              <th>Status Atual</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-governanca">
+            <tr>
+              <td>Quarto 101</td>
+              <td><span class="badge badge-limpo">Limpo</span></td>
+              <td>
+                <button onclick="mudarGovernanca(1, 'Sujo')">Marcar Sujo</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
