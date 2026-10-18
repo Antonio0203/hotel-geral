@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PMS - Hotel Tavares Admin</title>
   <link rel="stylesheet" href="css/admin.css">
+  <!-- Chart.js para Relatórios -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -14,7 +16,7 @@
       <h2>Tavares PMS</h2>
       <nav>
         <a href="#mapa" class="active">Mapa de Ocupação</a>
-        <a href="#reservas">Reservas</a>
+        <a href="#relatorios">Indicadores</a>
         <a href="#quartos">Gestão de Quartos</a>
         <a href="#governanca">Governança</a>
       </nav>
@@ -24,11 +26,11 @@
     <main class="content">
       <header class="topbar">
         <span>Painel do Staff</span>
-        <button id="btn-logout">Sair</button>
+        <button id="btn-logout" style="background: #e74c3c; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Sair</button>
       </header>
 
       <!-- Visão Gantt / Ocupação -->
-      <section class="panel-section">
+      <section id="mapa" class="panel-section">
         <h3>Mapa de Ocupação</h3>
         <div class="gantt-container">
           <div class="gantt-header">
@@ -54,27 +56,105 @@
         </div>
       </section>
 
-      <!-- Tabela Governança -->
+      <!-- Seção do Gráfico de Métricas -->
+      <section id="relatorios" class="panel-section">
+        <h3>Indicadores e Relatórios</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 300px; height: 260px;">
+            <canvas id="chart-ocupacao"></canvas>
+          </div>
+          <div style="flex: 1; min-width: 300px; height: 260px;">
+            <canvas id="chart-faturamento"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formulário para Cadastrar Novo Quarto -->
+      <section id="quartos" class="panel-section">
+        <h3>Cadastrar Novo Quarto</h3>
+        <form id="form-novo-quarto" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold; color: #555;">Nome / Número</label>
+            <input type="text" id="quarto-nome" placeholder="Suíte Presidencial 201" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold; color: #555;">Categoria</label>
+            <select id="quarto-categoria" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-top:4px;" required>
+              <option value="Standard">Standard</option>
+              <option value="Luxo">Luxo</option>
+              <option value="Suíte">Suíte</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold; color: #555;">Preço Diária (R$)</label>
+            <input type="number" step="0.01" id="quarto-preco" placeholder="250.00" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold; color: #555;">Capacidade (Adultos / Crianças)</label>
+            <div style="display:flex; gap:5px; margin-top:4px;">
+              <input type="number" id="quarto-adultos" value="2" min="1" style="width:50%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+              <input type="number" id="quarto-criancas" value="1" min="0" style="width:50%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size: 0.85rem; font-weight: bold; color: #555;">Descrição</label>
+            <textarea id="quarto-descricao" rows="2" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-top:4px;" placeholder="Descrição das facilidades e diferenciais do cômodo..."></textarea>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size: 0.85rem; font-weight: bold; color: #555;">Imagens do Quarto (Selecione uma ou mais)</label>
+            <input type="file" id="quarto-imagens" multiple accept="image/*" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-top:4px;">
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <button type="submit" style="background:#8c6d58; color:#fff; padding:10px 20px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Cadastrar Quarto</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Tabela de Quartos Cadastrados -->
       <section class="panel-section">
+        <h3>Quartos Cadastrados</h3>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Capacidade</th>
+                <th>Preço / Diária</th>
+                <th>Status Governança</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-quartos">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tabela Governança -->
+      <section id="governanca" class="panel-section">
         <h3>Governança e Limpeza</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Quarto</th>
-              <th>Status Atual</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody id="tabela-governanca">
-            <tr>
-              <td>Quarto 101</td>
-              <td><span class="badge badge-limpo">Limpo</span></td>
-              <td>
-                <button onclick="mudarGovernanca(1, 'Sujo')">Marcar Sujo</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Quarto</th>
+                <th>Status Atual</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-governanca">
+              <tr>
+                <td>Quarto 101</td>
+                <td><span class="badge badge-limpo">Limpo</span></td>
+                <td>
+                  <button onclick="mudarGovernanca(1, 'Sujo')" style="padding: 5px 10px; cursor: pointer;">Marcar Sujo</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
     </main>
