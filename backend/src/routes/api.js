@@ -6,6 +6,10 @@ const auth = require('../middlewares/auth');
 
 const quartoController = require('../controllers/quartoController');
 
+const authController = require('../controllers/authController');
+
+router.post('/auth/login', authController.login);
+
 // Configuração do Multer para Uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname, '../../uploads/')),
